@@ -52,12 +52,12 @@ export default {
     let realTime = ref(0); //显示在界面上的时间
     // computed格式化时间
     const time = computed(() => {
-      let result = '';
-      let m =Math.floor(realTime.value/60);
-      let s = realTime.value - 60*m;
+      let result = "";
+      let m = Math.floor(realTime.value / 60);
+      let s = realTime.value - 60 * m;
       m = 10 > m > 0 ? `0${m}` : m;
       s = 10 > s > 0 ? `0${s}` : s;
-      result = m === '00' ? `${s}秒` : `${m}:${s}分`
+      result = m === "00" ? `${s}秒` : `${m}:${s}分`;
       return result;
     });
 
@@ -107,24 +107,22 @@ export default {
         backgroundColor: ""
       }
     ]);
-    
-    
 
     if (!isPC()) {
       showFlag.value = true;
       d.value = 10;
     }
     //翻开还是插旗
-    let openOrFalg = '翻开'; 
+    let openOrFalg = "翻开";
     const changeState = index => {
-       //改变状态
-       openOrFalg = list.value[index].text;
-       for(let i=0;i<list.value.length;i++){
-          if(list.value[i].backgroundColor != ''){
-            list.value[i].backgroundColor = ''
-          }
-       }
-       list.value[index].backgroundColor = "#E91E63";
+      //改变状态
+      openOrFalg = list.value[index].text;
+      for (let i = 0; i < list.value.length; i++) {
+        if (list.value[i].backgroundColor != "") {
+          list.value[i].backgroundColor = "";
+        }
+      }
+      list.value[index].backgroundColor = "#E91E63";
     };
     // 显示的空白数组
     let arr = e => {
@@ -184,7 +182,7 @@ export default {
       }
       return sum;
     };
-     // 右键插旗
+    // 右键插旗
     let hereHaveBomb = (y, x) => {
       stepNum.value++;
       if (realArr[y][x] === "💣") {
@@ -198,23 +196,30 @@ export default {
     // 左键点击
     let showItem = (y, x, isPerson) => {
       // 如果是移动端的点击
-      if(!isPC()){
-        if(openOrFalg == '插旗'){
-             hereHaveBomb(y,x);
-             return
+      if (!isPC()) {
+        if (openOrFalg == "插旗") {
+          hereHaveBomb(y, x);
+          return;
         }
       }
       // 如果第一次点击 翻开周围不是雷的
       // 开启一个定时器
       if (stepNum.value === 0) {
         allTimer = setInterval(() => {
-          realTime.value ++;
+          realTime.value++;
         }, 1000);
         for (let i = 0; i < forArr.length; i++) {
           let findY = y + forArr[i][0];
           let findX = x + forArr[i][1];
-          if (!find(findY, findX)) {
-            showArr.value[findY][findX] = aroundBombNum(findY, findX);
+          if (
+            findX >= 0 &&
+            findY >= 0 &&
+            findY < showArr.length &&
+            findX < showArr[0].length
+          ) {
+            if (!find(findY, findX)) {
+              showArr.value[findY][findX] = aroundBombNum(findY, findX);
+            }
           }
         }
       }
@@ -236,7 +241,6 @@ export default {
       showArr.value[y][x] = aroundBombNum(y, x);
       // 如果个数为0，则翻开周围，依次递归
       if (aroundBombNum(y, x) === 0) {
-       
         for (let i = 0; i < forArr.length; i++) {
           let findY = y + forArr[i][0];
           let findX = x + forArr[i][1];
@@ -247,13 +251,11 @@ export default {
               let aroundNum = aroundBombNum(findY, findX);
               showArr.value[findY][findX] = aroundNum;
               if (showArr.value[findY][findX] === 0) {
-               
                 showItem(findY, findX);
               }
             }
           }
         }
-       
       } else {
         return;
       }
@@ -267,7 +269,7 @@ export default {
         clearTimeout(timer);
       }, 1000);
     };
-   
+
     let containerWith = ref(`${21 * d.value}px`);
     //初始化
     let init = () => {
